@@ -3,17 +3,14 @@ import { RiDashboardHorizontalFill } from "react-icons/ri";
 import DashboardHome from "../pages/Main/DashboardHome/DashboardHome";
 import MyProfile from "../pages/Profile/MyProfile";
 import EditMyProfile from "../pages/Profile/EditMyProfile";
-
 import HostDetails from "../pages/Main/Host/HostDetails";
 import { FaServicestack } from "react-icons/fa6";
 import Setting from "../pages/Main/Setting/Setting";
 import ChangePassword from "../pages/Main/Setting/Change-password/ChangePassword";
 import ForgotPassword from "../pages/Main/Setting/Change-password/ForgotPassword";
 import VerifyEmail from "../pages/Main/Setting/Change-password/VerifyEmail";
-
 import { IoSettingsOutline } from "react-icons/io5";
 import {  BookOpen } from "lucide-react";
-import AddItem from "../pages/Main/Shop/AddItem";
 import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import Books from "../pages/Main/Parties/Books";
 import Notifications from "../pages/Main/Notifications/Notifications";
