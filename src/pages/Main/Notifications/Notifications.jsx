@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Notifications = () => {
   const navigate = useNavigate();
   return (
-    <div className=" rounded-lg h-screen bg-[#FDFDFD]">
+    <div className=" rounded-lg  bg-[#FDFDFD]">
       <div className="px-[32px] py-6 text-white bg-info rounded-t-lg flex items-center gap-3">
         <FaAngleLeft
           onClick={() => navigate(-1)}
