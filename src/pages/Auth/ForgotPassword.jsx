@@ -33,7 +33,7 @@ export default function ForgotPassword() {
       </div>
 
       {/* Form Section */}
-      <div className="w-full md:w-1/2 bg-[#FFF0F0] flex items-center justify-center p-4">
+      <div className="w-full md:w-1/2 bg-[#EAEAEB] flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-sm p-8 max-w-md w-full">
           <div className="mb-6 flex items-center justify-center">
             <h1 className="text-[30px] font-bold">Forget Password</h1>
@@ -71,7 +71,7 @@ export default function ForgotPassword() {
 
             <button
               type="submit"
-              className={`w-full bg-[#E73E1E] hover:bg-[#D93C0E] text-white font-medium py-3 px-4 rounded-full transition duration-200 ${
+              className={`w-full bg-[#005163]  text-white font-medium py-3 px-4 rounded-full transition duration-200 ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
               disabled={isLoading}

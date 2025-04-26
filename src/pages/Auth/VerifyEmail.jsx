@@ -70,7 +70,7 @@ export default function VerifyEmail() {
       </div>
 
       {/* Verification Form Section */}
-      <div className="w-full md:w-1/2 flex items-center justify-center bg-[#FFF0F0] p-4">
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-[#EAEAEB] p-4">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
           <div className="mb-6 flex items-center justify-center">
        
@@ -100,7 +100,7 @@ export default function VerifyEmail() {
 
           <button
             onClick={handleVerify}
-            className="w-full py-3 bg-[#E73E1E] hover:bg-red-600 text-white font-semibold rounded-full transition duration-200"
+            className="w-full py-3 bg-[#005163]  hover:bg-red-600 text-white font-semibold rounded-full transition duration-200"
           >
             Verify
           </button>
