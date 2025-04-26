@@ -3,26 +3,20 @@ import { RiDashboardHorizontalFill } from "react-icons/ri";
 import DashboardHome from "../pages/Main/DashboardHome/DashboardHome";
 import MyProfile from "../pages/Profile/MyProfile";
 import EditMyProfile from "../pages/Profile/EditMyProfile";
-import TermsConditions from "../pages/Settings/TermsConditions";
-import EditTermsConditions from "../pages/Settings/EditTermsConditions";
-import PrivacyPolicy from "../pages/Settings/PrivacyPolicy";
-import EditPrivacyPolicy from "../pages/Settings/EditPrivacyPolicy";
 
-import { MdOutlineSecurityUpdateWarning } from "react-icons/md";
 import HostDetails from "../pages/Main/Host/HostDetails";
 import { FaServicestack } from "react-icons/fa6";
-import { BiMessageSquareDetail } from "react-icons/bi";
 import Setting from "../pages/Main/Setting/Setting";
 import ChangePassword from "../pages/Main/Setting/Change-password/ChangePassword";
 import ForgotPassword from "../pages/Main/Setting/Change-password/ForgotPassword";
 import VerifyEmail from "../pages/Main/Setting/Change-password/VerifyEmail";
-import Trust from "../pages/Settings/Trust";
-import EditTrust from "../pages/Settings/EditTrust";
+
 import { IoSettingsOutline } from "react-icons/io5";
 import {  BookOpen } from "lucide-react";
 import AddItem from "../pages/Main/Shop/AddItem";
 import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import Books from "../pages/Main/Parties/Books";
+import Notifications from "../pages/Main/Notifications/Notifications";
 
 export const dashboardItems = [
   {
@@ -38,8 +32,8 @@ export const dashboardItems = [
     element: <TransactionHome />,
   },
   {
-    path: "add-item",
-    element: <AddItem />,
+    path: "notifications",
+    element: <Notifications />,
   },
 
   {
