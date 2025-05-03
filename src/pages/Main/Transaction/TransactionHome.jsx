@@ -1,12 +1,9 @@
-import Transaction from "./Transaction";
+import UsersList from "./UsersList";
 
 export default function TransactionHome() {
   return (
     <div>
-      
-
-      <Transaction></Transaction>
-      
+      <UsersList></UsersList>
     </div>
   );
 }

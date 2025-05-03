@@ -11,9 +11,9 @@ import ForgotPassword from "../pages/Main/Setting/Change-password/ForgotPassword
 import VerifyEmail from "../pages/Main/Setting/Change-password/VerifyEmail";
 import { IoSettingsOutline } from "react-icons/io5";
 import {  BookOpen } from "lucide-react";
-import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import Books from "../pages/Main/Parties/Books";
 import Notifications from "../pages/Main/Notifications/Notifications";
+import UsersList from "../pages/Main/Transaction/UsersList";
 
 export const dashboardItems = [
   {
@@ -26,7 +26,7 @@ export const dashboardItems = [
     name: "Users",
     path: "users",
     icon: CiUser,
-    element: <TransactionHome />,
+    element: <UsersList />,
   },
   {
     path: "notifications",

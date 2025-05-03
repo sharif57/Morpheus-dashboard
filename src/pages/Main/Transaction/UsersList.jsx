@@ -1,13 +1,15 @@
 // import { Table } from "antd";
-// import exlamIcon from "../assets/images/exclamation-circle.png";
+// // import exlamIcon from "../assets/images/exclamation-circle.png";
+// import exlamIcon from "../../../assets/images/exclamation-circle.png";
 // import { useState } from "react";
-// import DashboardModal from "./DashboardModal";
-// import { useUserListQuery } from "../redux/features/useSlice";
+// import DashboardModal from "../../../Components/DashboardModal";
+// import { useUserListQuery } from "../../../redux/features/useSlice";
+// // import DashboardModal from "./DashboardModal";
 
-// const DashboardHomeTable = () => {
+// const UsersList = () => {
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [modalData, setModalData] = useState({});
-//     const {data} =useUserListQuery()}
+//     const { data: userData, isLoading } = useUserListQuery()
 
 //   const showModal = (data) => {
 //     setIsModalOpen(true);
@@ -24,7 +26,6 @@
 //     {
 //       title: "User Name",
 //       dataIndex: "name",
-    
 //       key: "name",
 //     },
 //     {
@@ -34,9 +35,11 @@
 //     },
 //     {
 //       title: "Date",
-//       key: "date",
 //       dataIndex: "date",
+//       key: "date",
+
 //     },
+   
 //     {
 //       title: "Action",
 //       key: "Review",
@@ -61,7 +64,9 @@
 //       transIs: `${index + 1}`,
 //       name: "Henry",
 //       Email: "sharif@gmail.com",
-//       Review: "See Review",
+//       PartyName: "Party Name",
+//       Payment: "$50",
+//       Earnings: "$7.5",
 //       date: "16 Apr 2024",
 //       _id: index,
 //     });
@@ -69,7 +74,7 @@
 
 //   return (
 //     <div className="rounded-lg border py-4 bg-white mt-8 recent-users-table">
-//       <h3 className="text-2xl text-black mb-4 pl-2">Recent Users</h3>
+//       <h3 className="text-2xl text-black mb-4 pl-2">Users List</h3>
 //       {/* Ant Design Table */}
 //       <Table
 //         columns={columns}
@@ -122,19 +127,19 @@
 //   );
 // };
 
-// export default DashboardHomeTable;
+// export default UsersList;
 
 import { Table } from "antd";
-import exlamIcon from "../assets/images/exclamation-circle.png";
+import exlamIcon from "../../../assets/images/exclamation-circle.png";
 import { useState } from "react";
-import DashboardModal from "./DashboardModal";
-import { useUserListQuery } from "../redux/features/useSlice";
+import DashboardModal from "../../../Components/DashboardModal";
+import { useUserListQuery } from "../../../redux/features/useSlice";
 import dayjs from "dayjs";
 
-const DashboardHomeTable = () => {
+const UsersList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
-  const { data: userData, isLoading } = useUserListQuery();
+  const { data: apiData, isLoading } = useUserListQuery();
 
   const showModal = (data) => {
     setIsModalOpen(true);
@@ -160,8 +165,8 @@ const DashboardHomeTable = () => {
     },
     {
       title: "Date Joined",
-      key: "date_joined",
       dataIndex: "date_joined",
+      key: "date_joined",
       render: (date) => dayjs(date).format("DD MMM YYYY"),
     },
     {
@@ -196,16 +201,15 @@ const DashboardHomeTable = () => {
     },
   ];
 
-  // Format the API data for the table
-  const tableData = userData?.user_list?.map((user) => ({
+  // Transform API data for the table
+  const tableData = apiData?.user_list?.map(user => ({
     ...user,
-    key: user.id, // Add unique key for each row
-  }));
+    key: user.id, // Required for AntD table row keys
+  })) || [];
 
   return (
     <div className="rounded-lg border py-4 bg-white mt-8 recent-users-table">
-      <h3 className="text-2xl text-black mb-4 pl-2">Recent Users</h3>
-      {/* Ant Design Table */}
+      <h3 className="text-2xl text-black mb-4 pl-2">Users List</h3>
       <Table
         columns={columns}
         dataSource={tableData}
@@ -213,6 +217,7 @@ const DashboardHomeTable = () => {
         pagination={{ position: ["bottomCenter"], pageSize: 10 }}
         className="rounded-lg"
       />
+      
       <DashboardModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -243,7 +248,7 @@ const DashboardHomeTable = () => {
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Date Joined</p>
             <p>
-              {modalData.date_joined &&
+              {modalData.date_joined && 
                 dayjs(modalData.date_joined).format("DD MMM YYYY hh:mm A")}
             </p>
           </div>
@@ -267,4 +272,4 @@ const DashboardHomeTable = () => {
   );
 };
 
-export default DashboardHomeTable;
+export default UsersList;
