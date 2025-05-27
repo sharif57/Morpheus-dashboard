@@ -15,8 +15,19 @@ export const userApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["User"],
-    })
+    }),
+      updateProfile: builder.mutation({
+      query: (data) => ({
+        url: "/accounts/update_user_profile/",
+        method: "PATCH",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
-export const {useUserProfileQuery, useUserListQuery} = userApi;
+export const {useUserProfileQuery, useUserListQuery, useUpdateProfileMutation} = userApi;

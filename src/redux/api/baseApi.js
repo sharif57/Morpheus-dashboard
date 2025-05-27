@@ -29,6 +29,7 @@ export const baseApi = createApi({
     "Review",
     "Buy",
     "Product-info",
+    'Books'
   ], // Added all necessary tags
   endpoints: () => ({}),
 });

@@ -1,12 +1,17 @@
-
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useVerifyEmailMutation } from "../../redux/features/authSlice";
+import toast from "react-hot-toast";
 
 export default function VerifyEmail() {
-  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [otp, setOtp] = useState('');
+  console.log(otp);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
+  console.log(email);
+  const [verifyEmail] = useVerifyEmailMutation();
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 6);
   }, []);
@@ -50,14 +55,17 @@ export default function VerifyEmail() {
     }
   };
 
-  const handleVerify = () => {
-    const otpValue = otp.join("");
-    if (otpValue.length === 6) {
-      alert(`Verifying OTP: ${otpValue}`);
-      navigate("/auth/reset-password")
-    } else {
-      alert("Please enter all 6 digits of the OTP");
+  const handleVerify = async() => {
+    try {
+      const res = await verifyEmail({ email, otp }).unwrap();
+      console.log(res, "res");
+      localStorage.setItem("accessToken", res.access);
+      toast.success(res.message || "verify successfully");
+    } catch (res) {
+      toast.error(res.error || "Verification failed");
+      // console.log(error);
     }
+   
   };
 
   return (
@@ -73,7 +81,6 @@ export default function VerifyEmail() {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-[#EAEAEB] p-4">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
           <div className="mb-6 flex items-center justify-center">
-       
             <h1 className="text-[30px] font-bold">Verify Email</h1>
           </div>
 

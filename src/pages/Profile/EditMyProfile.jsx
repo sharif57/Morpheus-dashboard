@@ -1,31 +1,57 @@
-import React, { useState } from "react";
-import { Button, Form, Input } from "antd";
-import dashProfile from "../../assets/images/dashboard-profile.png";
-// import "react-phone-number-input/style.css";
-// import PhoneInput from "react-phone-number-input";
-import { FiEdit } from "react-icons/fi";
+
+import { useState } from "react";
+import { Button, Form, Input, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
-import PhoneCountryInput from "../../Components/PhoneCountryInput";
-import PageHeading from "../../Components/PageHeading";
-import { PiCameraPlus } from "react-icons/pi";
-import { FaAngleLeft } from "react-icons/fa6";
+import { FaAngleLeft, FaUpload } from "react-icons/fa6";
+import { useUpdateProfileMutation, useUserProfileQuery } from "../../redux/features/useSlice";
 
 const EditMyProfile = () => {
-  const [code, setCode] = useState();
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [form] = Form.useForm();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { data, isLoading } = useUserProfileQuery();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+
+  // Base URL for images from environment variable
+  const IMAGE = import.meta.env.VITE_IMAGE_API;
+
+  // Fallback profile data
+  const profileData = {
+    name: data?.full_name || "N/A",
+    email: data?.email || "N/A",
+    phone: data?.phone || "+880 150597212", // Assuming phone might be part of data
+    profile: data?.profile_pic ? `${IMAGE}${data.profile_pic}` : "/media/faces/default-profile.png",
   };
+
+  // Handle form submission
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    if (values.name && values.name !== profileData.name) {
+      formData.append("full_name", values.name);
+    }
+    if (selectedImage) {
+      formData.append("profile_pic", selectedImage);
+    }
+    try {
+      await updateProfile(formData).unwrap();
+      navigate("/settings/profile"); // Navigate back to profile page on success
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  const profileData = {
-    name: "Jane Kooper",
-    email: "enrique@gmail.com",
-    phone: "+880 150597212",
-    profile: dashProfile,
+
+  // Handle image upload
+  const handleImageChange = ({ file }) => {
+    setSelectedImage(file);
   };
-  // console.log(code);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -40,6 +66,7 @@ const EditMyProfile = () => {
           </h3>
           <div className="w-full">
             <Form
+              form={form}
               name="basic"
               layout="vertical"
               className="w-full grid grid-cols-12 gap-x-10 px-14 py-8"
@@ -49,35 +76,51 @@ const EditMyProfile = () => {
               initialValues={{
                 name: profileData.name,
                 email: profileData.email,
+                phone: profileData.phone,
               }}
             >
-              <div className="col-span-3 space-y-6 ">
+              <div className="col-span-3 space-y-6">
                 <div className="min-h-[300px] flex flex-col items-center justify-center p-8 border border-black bg-lightGray/15">
                   <div className="my-2">
                     <img
-                      src={dashProfile}
-                      alt=""
+                      src={selectedImage ? URL.createObjectURL(selectedImage) : profileData.profile}
+                      alt="Profile"
                       className="h-28 w-28 rounded-full border-4 border-black"
+                      onError={(e) => {
+                        e.target.src = "/media/faces/default-profile.png";
+                      }}
                     />
                   </div>
-                  <h5 className="text-lg text-[#222222]">{"Profile"}</h5>
-                  <h4 className="text-2xl text-[#222222]">{"Admin"}</h4>
+                  <Upload
+                    accept="image/*"
+                    showUploadList={false}
+                    beforeUpload={() => false} // Prevent auto-upload
+                    onChange={handleImageChange}
+                  >
+                    <Button
+                      icon={<FaUpload />}
+                      className="bg-black text-white hover:bg-black/90 rounded-full"
+                    >
+                      Upload New Photo
+                    </Button>
+                  </Upload>
+                  <h5 className="text-lg text-[#222222]">Profile</h5>
+                  <h4 className="text-2xl text-[#222222]">
+                    {data?.is_superuser ? "Superuser" : data?.is_staff ? "Staff" : "Admin"}
+                  </h4>
                 </div>
               </div>
               <div className="col-span-9 space-y-[14px] w-full">
                 <Form.Item
-                  className="text-lg  font-medium text-black -mb-1"
+                  className="text-lg font-medium text-black -mb-1"
                   label="Name"
                   name="name"
+                  rules={[{ required: true, message: "Please input your name!" }]}
                 >
-                  <Input
-                    readOnly
-                    size="large"
-                    className="h-[53px] rounded-lg"
-                  />
+                  <Input size="large" className="h-[53px] rounded-lg" />
                 </Form.Item>
                 <Form.Item
-                  className="text-lg  font-medium text-black"
+                  className="text-lg font-medium text-black"
                   label="Email"
                   name="email"
                 >
@@ -87,18 +130,19 @@ const EditMyProfile = () => {
                     className="h-[53px] rounded-lg"
                   />
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                   className="text-lg text-[#222222] font-medium"
                   label="Phone Number"
                   name="phone"
                 >
-                  <PhoneCountryInput />
-                </Form.Item>
+                  <PhoneCountryInput defaultValue={profileData.phone} />
+                </Form.Item> */}
                 <Form.Item className="flex justify-end pt-4">
                   <Button
-                    // onClick={(e) => navigate(`edit`)}
-                    size="large"
                     type="primary"
+                    htmlType="submit"
+                    size="large"
+                    loading={isUpdating}
                     className="px-8 bg-black text-white hover:bg-black/90 rounded-full font-semibold"
                   >
                     Save Changes

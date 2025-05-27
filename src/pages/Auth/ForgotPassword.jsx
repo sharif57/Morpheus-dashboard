@@ -2,21 +2,28 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForgotPasswordMutation } from "../../redux/features/authSlice";
+import toast from "react-hot-toast";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [forgotPassword] =useForgotPasswordMutation()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      const res = await forgotPassword({ email }).unwrap();
+      console.log(res, "res");
+      toast.success(res.message || 'login successfully')
       await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log("Login attempt with:", { email });
-      navigate("/auth/verify-email");
+      navigate(`/auth/verify-email/?email=${email}`);
     } catch (error) {
+      toast.error(error.message || error.status)
       console.error("Login failed:", error);
     } finally {
       setIsLoading(false);
