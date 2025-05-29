@@ -106,7 +106,7 @@ export default function Books() {
         </button>
       </div>
 
-      {/* Upload Status */}
+    
       {uploadStatus && (
         <div className="mt-4">
           {uploadStatus.type === "uploading" && (
