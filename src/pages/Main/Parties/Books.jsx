@@ -1,8 +1,12 @@
-
 import { useState, useRef } from "react";
 import { ArrowLeft, ArrowUpToLine, X } from "lucide-react";
-import { useGetBooksListQuery, useUploadBooksMutation } from "../../../redux/features/uploadBooks";
+import {
+  useGetBooksListQuery,
+  useResetBooksMutation,
+  useUploadBooksMutation,
+} from "../../../redux/features/uploadBooks";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Books() {
   const [, setUploadedBooks] = useState([]);
@@ -11,8 +15,10 @@ export default function Books() {
   const [uploadStatus, setUploadStatus] = useState(null);
   const fileInputRef = useRef(null);
   const [uploadBooks] = useUploadBooksMutation();
-  const {data} = useGetBooksListQuery()
-  console.log(data, 'datas')
+  const { data } = useGetBooksListQuery();
+  console.log(data, "datas");
+
+  const [resetBooks] = useResetBooksMutation();
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -27,7 +33,7 @@ export default function Books() {
     if (validBooks.length !== files.length) {
       setUploadStatus({
         type: "error",
-        message: "Some files were rejected (only PDFs under 10MB allowed)"
+        message: "Some files were rejected (only PDFs under 10MB allowed)",
       });
       setTimeout(() => setUploadStatus(null), 3000);
     }
@@ -44,8 +50,8 @@ export default function Books() {
         formData.append("Key", "book_upload"); // Additional required parameter
 
         const response = await uploadBooks(formData).unwrap();
-        console.log(response, 'response');
-        
+        console.log(response, "response");
+
         if (response.error) {
           throw new Error(response.error.message || "Upload failed");
         }
@@ -59,16 +65,14 @@ export default function Books() {
       console.error("Upload error:", error);
       setUploadStatus({
         type: "error",
-        message: error.data?.error?.message || "Upload failed. Please try again."
+        message:
+          error.data?.error?.message || "Upload failed. Please try again.",
       });
       setTimeout(() => setUploadStatus(null), 3000);
     } finally {
       setUploadProgress(0);
     }
   };
-
-
-
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
@@ -78,35 +82,71 @@ export default function Books() {
     setUploadedBooks((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleReset = async () => {
+    const willReset = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, reset it!",
+    });
+
+    if (willReset.isConfirmed) {
+      try {
+        const res = await resetBooks({}).unwrap();
+        console.log(res, "reset");
+        Swal.fire("Reset!", "Books have been reset successfully.", "success");
+      } catch (error) {
+        console.error("Reset error:", error);
+        Swal.fire("Error!", "Failed to reset books.", "error");
+      }
+    }
+  };
+
   return (
     <div className="bg-[#006A82] p-6 rounded-lg shadow-md mx-4">
-      {/* Header */}
-      <Link to="/" className="flex items-center gap-3 p-4 bg-white rounded-lg text-black shadow-md">
-        <ArrowLeft className="cursor-pointer" />
-        <h1 className="text-xl font-semibold">Uploaded Books</h1>
-      </Link>
-
-      {/* Upload Section */}
-      <div className="flex items-end justify-end mt-2">
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-          accept="application/pdf"
-          className="hidden"
-          multiple
-        />
-        <button
-          onClick={triggerFileInput}
-          className="mt-4 bg-[#33CDF0] text-[#005163] py-2 px-4 rounded-lg shadow-md transition duration-300 hover:bg-[#2ab8d8] flex items-center"
-          disabled={uploadStatus?.type === "uploading"}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/"
+          className="flex items-center gap-3 p-2 bg-white rounded-lg text-black shadow-md"
         >
-          <ArrowUpToLine className="inline mr-2" />
-          {uploadStatus?.type === "uploading" ? "Uploading..." : "Upload New Book"}
+          <ArrowLeft className="cursor-pointer" />
+          <h1 className="text-lg font-semibold">Uploaded Books</h1>
+        </Link>
+      </div>
+      {/* Upload Section */}
+      <div className="flex items-center justify-between mt-6">
+        <button
+          onClick={handleReset}
+          className="bg-red hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
+        >
+          <X size={18} />
+          Reset Books
         </button>
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept="application/pdf"
+            className="hidden"
+            multiple
+          />
+          <button
+            onClick={triggerFileInput}
+            className="mt-4 bg-[#33CDF0] text-[#005163] py-2 px-4 rounded-lg shadow-md transition duration-300 hover:bg-[#2ab8d8] flex items-center"
+            disabled={uploadStatus?.type === "uploading"}
+          >
+            <ArrowUpToLine className="inline mr-2" />
+            {uploadStatus?.type === "uploading"
+              ? "Uploading..."
+              : "Upload New Book"}
+          </button>
+        </div>
       </div>
 
-    
       {uploadStatus && (
         <div className="mt-4">
           {uploadStatus.type === "uploading" && (
@@ -117,7 +157,9 @@ export default function Books() {
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
               </div>
-              <p className="text-gray-600 mt-1">Uploading {Math.round(uploadProgress)}%</p>
+              <p className="text-gray-600 mt-1">
+                Uploading {Math.round(uploadProgress)}%
+              </p>
             </>
           )}
           {uploadStatus.type === "success" && (
@@ -131,7 +173,7 @@ export default function Books() {
 
       {/* Book Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-        {data?.books.map((book, idx) => (
+        {data?.books?.map((book, idx) => (
           <div
             key={idx}
             className="bg-white rounded-lg p-5 shadow-md hover:shadow-xl transition-shadow duration-300 relative group"
@@ -148,9 +190,7 @@ export default function Books() {
             </button>
 
             {/* Book content */}
-            <div
-              className="cursor-pointer"
-            >
+            <div className="cursor-pointer">
               <div className="w-40 h-40 mx-auto bg-[#005163] rounded-full flex items-center justify-center overflow-hidden">
                 <img src="/pdf.png" alt="PDF Icon" className="object-contain" />
               </div>
@@ -158,12 +198,12 @@ export default function Books() {
                 {book?.book_name}
               </h2>
               <p className="text-center text-sm text-gray-500">
-                {new Date(book?.upload_on).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                {new Date(book?.upload_on).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}
               </p>
             </div>

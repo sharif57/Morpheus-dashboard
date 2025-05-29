@@ -36,7 +36,16 @@ export const uploadApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Books"],
     }),
+
+    resetBooks: builder.mutation({
+      query: (data) => ({
+        url: "/ai/reset_model/",
+        method: "POST",
+        body:data
+      }),
+      invalidatesTags: ["Books"],
+    }),
   }),
 });
 
-export const { useUploadBooksMutation, useGetBooksListQuery } = uploadApi;
+export const { useUploadBooksMutation, useGetBooksListQuery , useResetBooksMutation} = uploadApi;
