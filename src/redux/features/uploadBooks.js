@@ -103,9 +103,13 @@ export const uploadApi = createApi({
     }),
 
     resetBooks: builder.mutation({
-      query: () => ({
+      query: (body) => ({
         url: "/ai/reset_model/",
         method: "POST",
+        body: body,
+        headers:{
+          "Content-Type": "application/json",
+        }
       }),
       invalidatesTags: ["Books"],
     }),

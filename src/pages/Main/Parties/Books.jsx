@@ -257,7 +257,7 @@ export default function Books() {
   const { data } = useGetBooksListQuery({ email: users });
   const [deleteBooks] = useDeleteBooksMutation();
   const [resetBooks] = useResetBooksMutation();
-  console.log(selectedBooks,'selectedBooks');
+  console.log(selectedBooks, "selectedBooks");
 
   // const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -334,7 +334,7 @@ export default function Books() {
 
     if (willReset.isConfirmed) {
       try {
-        const res = await resetBooks({}).unwrap();
+        const res = await resetBooks({ email: users }).unwrap();
         console.log(res, "res");
         Swal.fire("Reset!", "Books have been reset successfully.", "success");
       } catch (error) {
@@ -353,38 +353,38 @@ export default function Books() {
   };
 
   const handleDeleteBook = async () => {
-  if (selectedBooks.length === 0) {
-    toast.error("Please select at least one book to delete.");
-    return;
-  }
-
-  const willDelete = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  });
-
-  if (willDelete.isConfirmed) {
-    try {
-      const deleteBody = {
-        email: users,
-        book_ids: selectedBooks,
-      };
-      
-      const res = await deleteBooks(deleteBody).unwrap();
-      console.log(res,'res')
-      toast.success(res?.message || "Books deleted successfully!");
-      setSelectedBooks([]); // Clear selection after deletion
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(error.data?.error?.message || "Failed to delete books.");
+    if (selectedBooks.length === 0) {
+      toast.error("Please select at least one book to delete.");
+      return;
     }
-  }
-};
+
+    const willDelete = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (willDelete.isConfirmed) {
+      try {
+        const deleteBody = {
+          email: users,
+          book_ids: selectedBooks,
+        };
+
+        const res = await deleteBooks(deleteBody).unwrap();
+        console.log(res, "res");
+        toast.success(res?.message || "Books deleted successfully!");
+        setSelectedBooks([]); // Clear selection after deletion
+      } catch (error) {
+        console.error("Delete error:", error);
+        toast.error(error.data?.error?.message || "Failed to delete books.");
+      }
+    }
+  };
 
   return (
     <div className="bg-[#006A82] p-6 rounded-lg shadow-md mx-4">
@@ -410,7 +410,7 @@ export default function Books() {
           {selectedBooks.length > 0 && (
             <button
               onClick={handleDeleteBook}
-              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
+              className="bg-red-500 hover:bg-red-600 border-2  border-r-red border-l-red text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
             >
               <X size={18} />
               Delete Selected ({selectedBooks.length})
